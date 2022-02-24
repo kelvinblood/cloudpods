@@ -28,6 +28,7 @@ import (
 	"yunion.io/x/onecloud/pkg/mcclient"
 	"yunion.io/x/onecloud/pkg/mcclient/auth"
 	"yunion.io/x/onecloud/pkg/mcclient/modules/k8s"
+	"yunion.io/x/onecloud/pkg/util/kebug"
 )
 
 type K8sResourceHandler struct {
@@ -49,6 +50,7 @@ func NewK8sResourceHandler(prefix string) *K8sResourceHandler {
 }
 
 func (h *K8sResourceHandler) Bind(app *appsrv.Application) {
+	kebug.Info("k8s.go")
 	app.AddHandler(GET, h.instancePrefix(""), FetchAuthToken(h.Get))
 	app.AddHandler(GET, h.instancePrefix("yaml"), FetchAuthToken(h.GetYAML))
 	app.AddHandler(PUT, h.instancePrefix(""), FetchAuthToken(h.Put))

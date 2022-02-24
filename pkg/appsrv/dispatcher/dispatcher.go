@@ -29,9 +29,11 @@ import (
 	"yunion.io/x/onecloud/pkg/httperrors"
 	"yunion.io/x/onecloud/pkg/i18n"
 	"yunion.io/x/onecloud/pkg/mcclient/modulebase"
+	"yunion.io/x/onecloud/pkg/util/kebug"
 )
 
 func AddModelDispatcher(prefix string, app *appsrv.Application, manager IModelDispatchHandler) {
+	kebug.Info("dispatch.go")
 	metadata := map[string]interface{}{"manager": manager}
 	tags := map[string]string{"resource": manager.KeywordPlural()}
 	// list
@@ -197,11 +199,15 @@ func mergeQueryParams(params map[string]string, query jsonutils.JSONObject, excl
 }
 
 func listHandler(ctx context.Context, w http.ResponseWriter, r *http.Request) {
+
+	kebug.Info("dispatch.go")
 	manager, params, query, _ := fetchEnv(ctx, w, r)
 	handleList(ctx, w, manager, nil, mergeQueryParams(params, query))
 }
 
 func handleList(ctx context.Context, w http.ResponseWriter, manager IModelDispatchHandler, ctxIds []SResourceContext, query jsonutils.JSONObject) {
+
+	kebug.Info("dispatch.go")
 	listResult, err := manager.List(ctx, query, ctxIds)
 	if err != nil {
 		httperrors.GeneralServerError(ctx, w, err)
@@ -227,6 +233,8 @@ func fetchContextIds(segs []string, params map[string]string) ([]SResourceContex
 }
 
 func listInContextHandler(ctx context.Context, w http.ResponseWriter, r *http.Request) {
+
+	kebug.Info("dispatch.go")
 	manager, params, query, _ := fetchEnv(ctx, w, r)
 	ctxIds, ctxKeys := fetchContextIds(appctx.AppContextCurrentRoot(ctx), params)
 	handleList(ctx, w, manager, ctxIds, mergeQueryParams(params, query, ctxKeys...))
@@ -243,6 +251,8 @@ func wrapBody(body jsonutils.JSONObject, key string) jsonutils.JSONObject {
 }
 
 func headHandler(ctx context.Context, w http.ResponseWriter, r *http.Request) {
+
+	kebug.Info("dispatch.go")
 	defer func() {
 		w.Header().Set("Content-Length", "0")
 		w.Write([]byte{})
@@ -482,11 +492,15 @@ func updateSpecHandler(ctx context.Context, w http.ResponseWriter, r *http.Reque
 }
 
 func deleteHandler(ctx context.Context, w http.ResponseWriter, r *http.Request) {
+
+	kebug.Info("dispatch.go")
 	manager, params, query, body := fetchEnv(ctx, w, r)
 	handleDelete(ctx, w, manager, params["<resid>"], nil, mergeQueryParams(params, query, "<resid>"), body, r)
 }
 
 func handleDelete(ctx context.Context, w http.ResponseWriter, manager IModelDispatchHandler, resId string, ctxIds []SResourceContext, query jsonutils.JSONObject, body jsonutils.JSONObject, r *http.Request) {
+
+	kebug.Info("dispatch.go")
 	var data jsonutils.JSONObject
 	var err error
 	if body != nil {

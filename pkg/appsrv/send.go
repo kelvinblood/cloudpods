@@ -60,6 +60,7 @@ func SendJSON(w http.ResponseWriter, obj jsonutils.JSONObject) {
 	if obj != nil {
 		output = []byte(obj.String())
 	}
+	log.Infoln(obj.String())
 	sendBytes(w, output)
 }
 

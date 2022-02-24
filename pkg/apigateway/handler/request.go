@@ -29,6 +29,7 @@ import (
 	"yunion.io/x/onecloud/pkg/mcclient"
 	"yunion.io/x/onecloud/pkg/mcclient/auth"
 	"yunion.io/x/onecloud/pkg/mcclient/modulebase"
+	"yunion.io/x/onecloud/pkg/util/kebug"
 )
 
 type Request struct {
@@ -47,6 +48,7 @@ type Request struct {
 }
 
 func newRequest(ctx context.Context, w http.ResponseWriter, r *http.Request) *Request {
+	kebug.Info("request.go")
 	params := appctx.AppContextParams(ctx)
 	token := AppContextToken(ctx)
 	session := auth.GetSession(ctx, token, FetchRegion(r), params[APIVer])

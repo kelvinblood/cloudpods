@@ -44,6 +44,7 @@ import (
 	"yunion.io/x/onecloud/pkg/mcclient/auth"
 	"yunion.io/x/onecloud/pkg/mcclient/modules"
 	"yunion.io/x/onecloud/pkg/util/httputils"
+	"yunion.io/x/onecloud/pkg/util/kebug"
 	"yunion.io/x/onecloud/pkg/util/logclient"
 	"yunion.io/x/onecloud/pkg/util/samlutils"
 	"yunion.io/x/onecloud/pkg/util/stringutils2"
@@ -57,6 +58,7 @@ type SCloudaccountManager struct {
 var CloudaccountManager *SCloudaccountManager
 
 func init() {
+    kebug.Info("cloudid-cloudaccount")
 	CloudaccountManager = &SCloudaccountManager{
 		SDomainLevelResourceBaseManager: db.NewDomainLevelResourceBaseManager(
 			SCloudaccount{},
@@ -82,10 +84,12 @@ type SCloudaccount struct {
 }
 
 func (manager *SCloudaccountManager) GetResourceCount() ([]db.SScopeResourceCount, error) {
+    kebug.Info("cloudid-cloudaccount")
 	return []db.SScopeResourceCount{}, nil
 }
 
 func (manager *SCloudaccountManager) GetICloudaccounts() ([]SCloudaccount, error) {
+    kebug.Info("cloudid-cloudaccount")
 	s := auth.GetAdminSession(context.Background(), options.Options.Region, "")
 
 	data := []jsonutils.JSONObject{}
@@ -115,6 +119,7 @@ func (manager *SCloudaccountManager) GetICloudaccounts() ([]SCloudaccount, error
 }
 
 func (self *SCloudaccount) GetClouduserAccountName(name string) (string, string) {
+    kebug.Info("cloudid-cloudaccount")
 	account := ""
 	switch self.Provider {
 	case computeapi.CLOUD_PROVIDER_ALIYUN:
@@ -139,6 +144,7 @@ func (self *SCloudaccount) GetClouduserAccountName(name string) (string, string)
 }
 
 func (manager *SCloudaccountManager) GetCloudaccounts() ([]SCloudaccount, error) {
+    kebug.Info("cloudid-cloudaccount")
 	accounts := []SCloudaccount{}
 	q := manager.Query()
 	err := db.FetchModelObjects(manager, q, &accounts)
@@ -210,6 +216,7 @@ func (manager *SCloudaccountManager) syncCloudaccounts(ctx context.Context, user
 }
 
 func (self *SCloudaccount) removeCloudproviders(ctx context.Context, userCred mcclient.TokenCredential) error {
+    kebug.Info("cloudid-cloudaccount")
 	providers, err := self.GetCloudproviders()
 	if err != nil {
 		return errors.Wrap(err, "GetCloudproviders")
@@ -224,10 +231,12 @@ func (self *SCloudaccount) removeCloudproviders(ctx context.Context, userCred mc
 }
 
 func (self *SCloudaccount) GetCloudproviderId() string {
+    kebug.Info("cloudid-cloudaccount")
 	return ""
 }
 
 func (self *SCloudaccount) removeCloudgroupcaches(ctx context.Context, userCred mcclient.TokenCredential) error {
+    kebug.Info("cloudid-cloudaccount")
 	caches, err := self.GetCloudgroupcaches()
 	if err != nil {
 		return errors.Wrap(err, "GetCloudgroupcaches")
@@ -242,6 +251,7 @@ func (self *SCloudaccount) removeCloudgroupcaches(ctx context.Context, userCred 
 }
 
 func (self *SCloudaccount) removeSAMLProviders(ctx context.Context, userCred mcclient.TokenCredential) error {
+    kebug.Info("cloudid-cloudaccount")
 	samls, err := self.GetSAMLProviders()
 	if err != nil {
 		return errors.Wrap(err, "GetSAMLProviders")
@@ -256,6 +266,7 @@ func (self *SCloudaccount) removeSAMLProviders(ctx context.Context, userCred mcc
 }
 
 func (self *SCloudaccount) removeCloudroles(ctx context.Context, userCred mcclient.TokenCredential) error {
+    kebug.Info("cloudid-cloudaccount")
 	roles, err := self.GetCloudroles()
 	if err != nil {
 		return errors.Wrapf(err, "GetCloudroles")
@@ -270,6 +281,7 @@ func (self *SCloudaccount) removeCloudroles(ctx context.Context, userCred mcclie
 }
 
 func (self *SCloudaccount) syncRemoveCloudaccount(ctx context.Context, userCred mcclient.TokenCredential) error {
+    kebug.Info("cloudid-cloudaccount")
 	err := self.syncRemoveClouduser(ctx, userCred)
 	if err != nil {
 		return errors.Wrap(err, "syncRemoveClouduser")
@@ -304,6 +316,7 @@ func (self *SCloudaccount) syncRemoveCloudaccount(ctx context.Context, userCred 
 }
 
 func (self *SCloudaccount) GetSamlusers() ([]SSamluser, error) {
+    kebug.Info("cloudid-cloudaccount")
 	q := SamluserManager.Query().Equals("cloudaccount_id", self.Id)
 	users := []SSamluser{}
 	err := db.FetchModelObjects(SamluserManager, q, &users)
@@ -314,6 +327,7 @@ func (self *SCloudaccount) GetSamlusers() ([]SSamluser, error) {
 }
 
 func (self *SCloudaccount) removeSamluser(ctx context.Context, userCred mcclient.TokenCredential) error {
+    kebug.Info("cloudid-cloudaccount")
 	users, err := self.GetSamlusers()
 	if err != nil {
 		return errors.Wrapf(err, "GetSamusers")
@@ -328,6 +342,7 @@ func (self *SCloudaccount) removeSamluser(ctx context.Context, userCred mcclient
 }
 
 func (self *SCloudaccount) syncRemoveClouduser(ctx context.Context, userCred mcclient.TokenCredential) error {
+    kebug.Info("cloudid-cloudaccount")
 	users, err := self.getCloudusers()
 	if err != nil {
 		return errors.Wrap(err, "getCloudusers")
@@ -342,6 +357,7 @@ func (self *SCloudaccount) syncRemoveClouduser(ctx context.Context, userCred mcc
 }
 
 func (manager *SCloudaccountManager) newFromICloudaccount(ctx context.Context, userCred mcclient.TokenCredential, account *SCloudaccount) (*SCloudaccount, error) {
+    kebug.Info("cloudid-cloudaccount")
 	lockman.LockClass(ctx, manager, db.GetLockClassKey(manager, userCred))
 	defer lockman.ReleaseClass(ctx, manager, db.GetLockClassKey(manager, userCred))
 
@@ -355,6 +371,7 @@ func (manager *SCloudaccountManager) newFromICloudaccount(ctx context.Context, u
 }
 
 func (self *SCloudaccount) registerHuaweSaml(ctx context.Context) error {
+    kebug.Info("cloudid-cloudaccount")
 	if self.Provider != computeapi.CLOUD_PROVIDER_HCSO {
 		return nil
 	}
@@ -409,6 +426,7 @@ func (self *SCloudaccount) syncWithICloudaccount(ctx context.Context, userCred m
 }
 
 func (manager *SCloudaccountManager) SyncCloudaccounts(ctx context.Context, userCred mcclient.TokenCredential, isStart bool) {
+    kebug.Info("cloudid-cloudaccount")
 	localAccounts, result := manager.syncCloudaccounts(ctx, userCred)
 	log.Infof("SyncCloudaccounts: %s", result.Result())
 	for i, account := range localAccounts {
@@ -421,6 +439,7 @@ func (manager *SCloudaccountManager) SyncCloudaccounts(ctx context.Context, user
 }
 
 func (self *SCloudaccount) StartSyncSamlProvidersTask(ctx context.Context, userCred mcclient.TokenCredential, parentTaskId string) error {
+    kebug.Info("cloudid-cloudaccount")
 	if self.SAMLAuth.IsFalse() {
 		log.Debugf("cloudaccount %s(%s) not enable saml auth, skip sycing saml provider", self.Name, self.Provider)
 		return nil
@@ -435,14 +454,17 @@ func (self *SCloudaccount) StartSyncSamlProvidersTask(ctx context.Context, userC
 }
 
 func (self SCloudaccount) GetGlobalId() string {
+    kebug.Info("cloudid-cloudaccount")
 	return self.Id
 }
 
 func (self SCloudaccount) GetExternalId() string {
+    kebug.Info("cloudid-cloudaccount")
 	return self.Id
 }
 
 func (manager *SCloudaccountManager) FetchAccount(ctx context.Context, id string) (*SCloudaccount, error) {
+    kebug.Info("cloudid-cloudaccount")
 	account, err := manager.FetchById(id)
 	if err != nil {
 		if err == sql.ErrNoRows {
@@ -489,6 +511,7 @@ type SCloudDelegate struct {
 }
 
 func (self *SCloudaccount) getCloudDelegate(ctx context.Context) (*SCloudDelegate, error) {
+    kebug.Info("cloudid-cloudaccount")
 	s := auth.GetAdminSession(ctx, options.Options.Region, "")
 	result, err := modules.Cloudaccounts.Get(s, self.Id, nil)
 	if err != nil {
@@ -503,6 +526,7 @@ func (self *SCloudaccount) getCloudDelegate(ctx context.Context) (*SCloudDelegat
 }
 
 func (self *SCloudaccount) GetProvider() (cloudprovider.ICloudProvider, error) {
+    kebug.Info("cloudid-cloudaccount")
 	delegate, err := self.getCloudDelegate(context.Background())
 	if err != nil {
 		return nil, errors.Wrap(err, "getCloudDelegate")
@@ -511,6 +535,7 @@ func (self *SCloudaccount) GetProvider() (cloudprovider.ICloudProvider, error) {
 }
 
 func (self *SCloudaccount) GetCloudDelegaes(ctx context.Context) ([]SCloudDelegate, error) {
+    kebug.Info("cloudid-cloudaccount")
 	s := auth.GetAdminSession(ctx, options.Options.Region, "")
 	params := map[string]string{"cloudaccount": self.Id}
 	result, err := modules.Cloudproviders.List(s, jsonutils.Marshal(params))
@@ -526,18 +551,22 @@ func (self *SCloudaccount) GetCloudDelegaes(ctx context.Context) ([]SCloudDelega
 }
 
 func (account *SCloudDelegate) getPassword() (string, error) {
+    kebug.Info("cloudid-cloudaccount")
 	return utils.DescryptAESBase64(account.Id, account.Secret)
 }
 
 func (account *SCloudDelegate) getAccessUrl() string {
+    kebug.Info("cloudid-cloudaccount")
 	return account.AccessUrl
 }
 
 func (self *SCloudaccount) GetProviderFactory() (cloudprovider.ICloudProviderFactory, error) {
+    kebug.Info("cloudid-cloudaccount")
 	return cloudprovider.GetProviderFactory(self.Provider)
 }
 
 func (account *SCloudDelegate) GetProvider() (cloudprovider.ICloudProvider, error) {
+    kebug.Info("cloudid-cloudaccount")
 	if !account.Enabled {
 		log.Warningf("Cloud account %s is disabled", account.Name)
 	}
@@ -575,6 +604,7 @@ func (account *SCloudDelegate) GetProvider() (cloudprovider.ICloudProvider, erro
 }
 
 func (self *SCloudaccount) StartSyncCloudusersTask(ctx context.Context, userCred mcclient.TokenCredential, parentTaskId string) error {
+    kebug.Info("cloudid-cloudaccount")
 	params := jsonutils.NewDict()
 	task, err := taskman.TaskManager.NewTask(ctx, "SyncCloudusersTask", self, userCred, params, parentTaskId, "", nil)
 	if err != nil {
@@ -585,6 +615,7 @@ func (self *SCloudaccount) StartSyncCloudusersTask(ctx context.Context, userCred
 }
 
 func (self *SCloudaccount) getCloudusers() ([]SClouduser, error) {
+    kebug.Info("cloudid-cloudaccount")
 	users := []SClouduser{}
 	q := ClouduserManager.Query().Equals("cloudaccount_id", self.Id)
 	err := db.FetchModelObjects(ClouduserManager, q, &users)
@@ -595,6 +626,7 @@ func (self *SCloudaccount) getCloudusers() ([]SClouduser, error) {
 }
 
 func (self *SCloudaccount) GetCloudusers() ([]SClouduser, error) {
+    kebug.Info("cloudid-cloudaccount")
 	users := []SClouduser{}
 	q := ClouduserManager.Query().Equals("cloudaccount_id", self.Id)
 	err := db.FetchModelObjects(ClouduserManager, q, &users)
@@ -605,6 +637,7 @@ func (self *SCloudaccount) GetCloudusers() ([]SClouduser, error) {
 }
 
 func (self *SCloudaccount) SyncCloudusers(ctx context.Context, userCred mcclient.TokenCredential, iUsers []cloudprovider.IClouduser) ([]SClouduser, []cloudprovider.IClouduser, compare.SyncResult) {
+    kebug.Info("cloudid-cloudaccount")
 	lockman.LockRawObject(ctx, "cloudusers", self.Id)
 	defer lockman.ReleaseRawObject(ctx, "cloudusers", self.Id)
 
@@ -664,6 +697,7 @@ func (self *SCloudaccount) SyncCloudusers(ctx context.Context, userCred mcclient
 }
 
 func (self *SCloudaccount) newClouduser(ctx context.Context, userCred mcclient.TokenCredential, iUser cloudprovider.IClouduser) (*SClouduser, error) {
+    kebug.Info("cloudid-cloudaccount")
 	lockman.LockObject(ctx, self)
 	defer lockman.ReleaseObject(ctx, self)
 
@@ -688,6 +722,7 @@ func (self *SCloudaccount) newClouduser(ctx context.Context, userCred mcclient.T
 }
 
 func (self *SCloudaccount) GetCloudpolicies() ([]SCloudpolicy, error) {
+    kebug.Info("cloudid-cloudaccount")
 	q := CloudpolicyManager.Query().Equals("provider", self.Provider)
 	policies := []SCloudpolicy{}
 	err := db.FetchModelObjects(CloudpolicyManager, q, &policies)
@@ -708,6 +743,7 @@ func (self *SCloudaccount) GetSystemCloudpolicies() ([]SCloudpolicy, error) {
 }
 
 func (self *SCloudaccount) GetCustomCloudpolicies() ([]SCloudpolicy, error) {
+    kebug.Info("cloudid-cloudaccount")
 	q := CloudpolicyManager.Query().Equals("provider", self.Provider).Equals("policy_type", api.CLOUD_POLICY_TYPE_CUSTOM).Equals("domain_id", self.DomainId)
 	policies := []SCloudpolicy{}
 	err := db.FetchModelObjects(CloudpolicyManager, q, &policies)
@@ -718,6 +754,7 @@ func (self *SCloudaccount) GetCustomCloudpolicies() ([]SCloudpolicy, error) {
 }
 
 func (self *SCloudaccount) GetCloudpolicycaches(policyIds []string, cloudproviderId string) ([]SCloudpolicycache, error) {
+    kebug.Info("cloudid-cloudaccount")
 	q := CloudpolicycacheManager.Query().Equals("cloudaccount_id", self.Id)
 	if len(policyIds) > 0 {
 		q = q.In("cloudpolicy_id", policyIds)
@@ -734,6 +771,7 @@ func (self *SCloudaccount) GetCloudpolicycaches(policyIds []string, cloudprovide
 }
 
 func (self *SCloudaccount) SyncCustomCloudpoliciesFromCloud(ctx context.Context, userCred mcclient.TokenCredential) error {
+    kebug.Info("cloudid-cloudaccount")
 	factory, err := self.GetProviderFactory()
 	if err != nil {
 		return errors.Wrapf(err, "GetProviderFactory")
@@ -767,6 +805,7 @@ func (self *SCloudaccount) SyncCustomCloudpoliciesFromCloud(ctx context.Context,
 }
 
 func (self *SCloudaccount) SyncCustomCloudpoliciesToLocal(ctx context.Context, userCred mcclient.TokenCredential, iPolicies []cloudprovider.ICloudpolicy, cloudproviderId string) compare.SyncResult {
+    kebug.Info("cloudid-cloudaccount")
 	result := compare.SyncResult{}
 
 	dbCaches, err := self.GetCloudpolicycaches(nil, cloudproviderId)
@@ -811,6 +850,7 @@ func (self *SCloudaccount) SyncCustomCloudpoliciesToLocal(ctx context.Context, u
 }
 
 func (self *SCloudaccount) newCustomPolicy(ctx context.Context, userCred mcclient.TokenCredential, iPolicy cloudprovider.ICloudpolicy) (*SCloudpolicy, error) {
+    kebug.Info("cloudid-cloudaccount")
 	policies, err := self.GetCustomCloudpolicies()
 	if err != nil {
 		return nil, errors.Wrap(err, "GetCustomCloudpolicies")
@@ -832,6 +872,7 @@ func (self *SCloudaccount) newCustomPolicy(ctx context.Context, userCred mcclien
 }
 
 func (self *SCloudaccount) GetCloudaccountByProvider(provider string) ([]SCloudaccount, error) {
+    kebug.Info("cloudid-cloudaccount")
 	accounts := []SCloudaccount{}
 	q := CloudaccountManager.Query().Equals("provider", provider)
 	err := db.FetchModelObjects(CloudaccountManager, q, &accounts)
@@ -842,6 +883,7 @@ func (self *SCloudaccount) GetCloudaccountByProvider(provider string) ([]SClouda
 }
 
 func (self *SCloudaccount) SyncSystemCloudpoliciesFromCloud(ctx context.Context, userCred mcclient.TokenCredential, refresh bool) error {
+    kebug.Info("cloudid-cloudaccount")
 	dbPolicies, err := self.GetSystemCloudpolicies()
 	if err != nil {
 		return errors.Wrapf(err, "GetSystemCloudpolicies")
@@ -879,6 +921,7 @@ func (self *SCloudaccount) SyncSystemCloudpoliciesFromCloud(ctx context.Context,
 }
 
 func (self *SCloudaccount) syncSystemCloudpoliciesFromCloud(ctx context.Context, userCred mcclient.TokenCredential, iPolicies []SCloudpolicy, dbPolicies []SCloudpolicy) error {
+    kebug.Info("cloudid-cloudaccount")
 	result := compare.SyncResult{}
 
 	removed := make([]SCloudpolicy, 0)
@@ -923,6 +966,7 @@ func (self *SCloudaccount) syncSystemCloudpoliciesFromCloud(ctx context.Context,
 }
 
 func (self *SCloudaccount) newCustomCloudpolicy(ctx context.Context, userCred mcclient.TokenCredential, iPolicy cloudprovider.ICloudpolicy) (*SCloudpolicy, error) {
+    kebug.Info("cloudid-cloudaccount")
 	lockman.LockObject(ctx, self)
 	defer lockman.ReleaseObject(ctx, self)
 
@@ -944,6 +988,7 @@ func (self *SCloudaccount) newCustomCloudpolicy(ctx context.Context, userCred mc
 }
 
 func (self *SCloudaccount) newSystemCloudpolicy(ctx context.Context, userCred mcclient.TokenCredential, iPolicy SCloudpolicy) (*SCloudpolicy, error) {
+    kebug.Info("cloudid-cloudaccount")
 	lockman.LockObject(ctx, self)
 	defer lockman.ReleaseObject(ctx, self)
 
@@ -963,6 +1008,7 @@ func (self *SCloudaccount) newSystemCloudpolicy(ctx context.Context, userCred mc
 }
 
 func (self *SCloudaccount) GetCloudproviders() ([]SCloudprovider, error) {
+    kebug.Info("cloudid-cloudaccount")
 	q := CloudproviderManager.Query().Equals("cloudaccount_id", self.Id)
 	providers := []SCloudprovider{}
 	err := db.FetchModelObjects(CloudproviderManager, q, &providers)
@@ -973,6 +1019,7 @@ func (self *SCloudaccount) GetCloudproviders() ([]SCloudprovider, error) {
 }
 
 func (self *SCloudaccount) GetICloudprovider() ([]SCloudprovider, error) {
+    kebug.Info("cloudid-cloudaccount")
 	s := auth.GetAdminSession(context.Background(), options.Options.Region, "")
 	data := []jsonutils.JSONObject{}
 	offset := int64(0)
@@ -1002,6 +1049,7 @@ func (self *SCloudaccount) GetICloudprovider() ([]SCloudprovider, error) {
 }
 
 func (self *SCloudaccount) syncCloudprovider(ctx context.Context, userCred mcclient.TokenCredential) compare.SyncResult {
+    kebug.Info("cloudid-cloudaccount")
 	lockman.LockRawObject(ctx, "cloudproviders", self.Id)
 	defer lockman.ReleaseRawObject(ctx, "cloudproviders", self.Id)
 
@@ -1060,6 +1108,7 @@ func (self *SCloudaccount) syncCloudprovider(ctx context.Context, userCred mccli
 }
 
 func (self *SCloudaccount) GetCloudgroups() ([]SCloudgroup, error) {
+    kebug.Info("cloudid-cloudaccount")
 	groups := []SCloudgroup{}
 	q := CloudgroupManager.Query().Equals("provider", self.Provider).Equals("domain_id", self.DomainId)
 	err := db.FetchModelObjects(CloudgroupManager, q, &groups)
@@ -1070,6 +1119,7 @@ func (self *SCloudaccount) GetCloudgroups() ([]SCloudgroup, error) {
 }
 
 func (self *SCloudaccount) GetCloudgroupcaches() ([]SCloudgroupcache, error) {
+    kebug.Info("cloudid-cloudaccount")
 	caches := []SCloudgroupcache{}
 	q := CloudgroupcacheManager.Query().Equals("cloudaccount_id", self.Id)
 	err := db.FetchModelObjects(CloudgroupcacheManager, q, &caches)
@@ -1080,6 +1130,7 @@ func (self *SCloudaccount) GetCloudgroupcaches() ([]SCloudgroupcache, error) {
 }
 
 func (manager *SCloudaccountManager) GetSupportCreateCloudgroupAccounts() ([]SCloudaccount, error) {
+    kebug.Info("cloudid-cloudaccount")
 	accounts := []SCloudaccount{}
 	q := manager.Query().In("provider", cloudprovider.GetSupportCloudgroupProviders())
 	err := db.FetchModelObjects(manager, q, &accounts)
@@ -1090,6 +1141,7 @@ func (manager *SCloudaccountManager) GetSupportCreateCloudgroupAccounts() ([]SCl
 }
 
 func (manager *SCloudaccountManager) GetSupportCloudIdAccounts() ([]SCloudaccount, error) {
+    kebug.Info("cloudid-cloudaccount")
 	accounts := []SCloudaccount{}
 	q := manager.Query().In("provider", cloudprovider.GetSupportCloudIdProvider())
 	err := db.FetchModelObjects(manager, q, &accounts)
@@ -1100,6 +1152,7 @@ func (manager *SCloudaccountManager) GetSupportCloudIdAccounts() ([]SCloudaccoun
 }
 
 func (manager *SCloudaccountManager) SyncCloudidSystemPolicies(ctx context.Context, userCred mcclient.TokenCredential, isStart bool) {
+    kebug.Info("cloudid-cloudaccount")
 	accounts, err := manager.GetSupportCloudIdAccounts()
 	if err != nil {
 		log.Errorf("GetSupportCloudIdAccounts error: %v", err)
@@ -1120,6 +1173,7 @@ func (manager *SCloudaccountManager) SyncCloudidSystemPolicies(ctx context.Conte
 }
 
 func (self *SCloudaccount) StartSystemCloudpolicySyncTask(ctx context.Context, userCred mcclient.TokenCredential, refresh bool, parentTaskId string) error {
+    kebug.Info("cloudid-cloudaccount")
 	params := jsonutils.NewDict()
 	params.Add(jsonutils.NewBool(refresh), "refresh")
 	task, err := taskman.TaskManager.NewTask(ctx, "SystemCloudpolicySyncTask", self, userCred, params, parentTaskId, "", nil)
@@ -1131,6 +1185,7 @@ func (self *SCloudaccount) StartSystemCloudpolicySyncTask(ctx context.Context, u
 }
 
 func (manager *SCloudaccountManager) SyncCloudidResources(ctx context.Context, userCred mcclient.TokenCredential, isStart bool) {
+    kebug.Info("cloudid-cloudaccount")
 	accounts, err := manager.GetSupportCloudIdAccounts()
 	if err != nil {
 		log.Errorf("GetSupportCloudIdAccounts error: %v", err)
@@ -1145,6 +1200,7 @@ func (manager *SCloudaccountManager) SyncCloudidResources(ctx context.Context, u
 }
 
 func (self *SCloudaccount) IsSAMLProviderValid() (*SSAMLProvider, bool) {
+    kebug.Info("cloudid-cloudaccount")
 	provider, err := self.RegisterSAMProvider()
 	if err != nil {
 		return provider, false
@@ -1156,6 +1212,7 @@ func (self *SCloudaccount) IsSAMLProviderValid() (*SSAMLProvider, bool) {
 }
 
 func (self *SCloudaccount) RegisterSAMProvider() (*SSAMLProvider, error) {
+    kebug.Info("cloudid-cloudaccount")
 	if len(options.Options.ApiServer) == 0 {
 		return nil, fmt.Errorf("empty api server")
 	}
@@ -1189,6 +1246,7 @@ func (self *SCloudaccount) RegisterSAMProvider() (*SSAMLProvider, error) {
 }
 
 func (self *SCloudaccount) StartSAMLProviderCreateTask(ctx context.Context, userCred mcclient.TokenCredential) error {
+    kebug.Info("cloudid-cloudaccount")
 	if self.SAMLAuth.IsFalse() {
 		return nil
 	}
@@ -1206,6 +1264,7 @@ func (self *SCloudaccount) StartSAMLProviderCreateTask(ctx context.Context, user
 }
 
 func (manager *SCloudaccountManager) SyncSAMLProviders(ctx context.Context, userCred mcclient.TokenCredential, isStart bool) {
+    kebug.Info("cloudid-cloudaccount")
 	accounts, err := manager.GetSupportCloudIdAccounts()
 	if err != nil {
 		log.Errorf("GetSupportCloudIdAccounts error: %v", err)
@@ -1220,6 +1279,7 @@ func (manager *SCloudaccountManager) SyncSAMLProviders(ctx context.Context, user
 }
 
 func (manager *SCloudaccountManager) SyncCloudroles(ctx context.Context, userCred mcclient.TokenCredential, isStart bool) {
+    kebug.Info("cloudid-cloudaccount")
 	accounts, err := manager.GetSupportCloudIdAccounts()
 	if err != nil {
 		log.Errorf("GetSupportCloudIdAccounts error: %v", err)
@@ -1234,6 +1294,7 @@ func (manager *SCloudaccountManager) SyncCloudroles(ctx context.Context, userCre
 }
 
 func (self *SCloudaccount) StartSyncCloudrolesTask(ctx context.Context, userCred mcclient.TokenCredential, parentTaskId string) error {
+    kebug.Info("cloudid-cloudaccount")
 	params := jsonutils.NewDict()
 	task, err := taskman.TaskManager.NewTask(ctx, "SyncCloudrolesTask", self, userCred, params, parentTaskId, "", nil)
 	if err != nil {
@@ -1244,6 +1305,7 @@ func (self *SCloudaccount) StartSyncCloudrolesTask(ctx context.Context, userCred
 }
 
 func (self *SCloudaccount) GetSAMLProviders() ([]SSAMLProvider, error) {
+    kebug.Info("cloudid-cloudaccount")
 	q := SAMLProviderManager.Query().Equals("cloudaccount_id", self.Id).Desc("external_id")
 	samls := []SSAMLProvider{}
 	err := db.FetchModelObjects(SAMLProviderManager, q, &samls)
@@ -1254,6 +1316,7 @@ func (self *SCloudaccount) GetSAMLProviders() ([]SSAMLProvider, error) {
 }
 
 func (self *SCloudaccount) SyncSAMLProviders(ctx context.Context, userCred mcclient.TokenCredential, samls []cloudprovider.ICloudSAMLProvider) compare.SyncResult {
+    kebug.Info("cloudid-cloudaccount")
 
 	result := compare.SyncResult{}
 
@@ -1304,6 +1367,7 @@ func (self *SCloudaccount) SyncSAMLProviders(ctx context.Context, userCred mccli
 }
 
 func (self *SCloudaccount) newFromCloudSAMLProvider(ctx context.Context, userCred mcclient.TokenCredential, ext cloudprovider.ICloudSAMLProvider) error {
+    kebug.Info("cloudid-cloudaccount")
 	saml := &SSAMLProvider{}
 	saml.SetModelManager(SAMLProviderManager, saml)
 	saml.Name = ext.GetName()
@@ -1327,6 +1391,7 @@ func (self *SCloudaccount) newFromCloudSAMLProvider(ctx context.Context, userCre
 }
 
 func (self *SCloudaccount) StartSyncCloudIdResourcesTask(ctx context.Context, userCred mcclient.TokenCredential, parentTaskId string) error {
+    kebug.Info("cloudid-cloudaccount")
 	params := jsonutils.NewDict()
 	task, err := taskman.TaskManager.NewTask(ctx, "SyncCloudIdResourcesTask", self, userCred, params, parentTaskId, "", nil)
 	if err != nil {
@@ -1337,6 +1402,7 @@ func (self *SCloudaccount) StartSyncCloudIdResourcesTask(ctx context.Context, us
 }
 
 func (self *SCloudaccount) SyncCloudgroupcaches(ctx context.Context, userCred mcclient.TokenCredential, iGroups []cloudprovider.ICloudgroup) error {
+    kebug.Info("cloudid-cloudaccount")
 	result := compare.SyncResult{}
 
 	dbCaches, err := self.GetCloudgroupcaches()
@@ -1386,6 +1452,7 @@ func (self *SCloudaccount) SyncCloudgroupcaches(ctx context.Context, userCred mc
 }
 
 func (self *SCloudaccount) newCloudgroup(ctx context.Context, userCred mcclient.TokenCredential, iGroup cloudprovider.ICloudgroup) (*SCloudgroupcache, error) {
+    kebug.Info("cloudid-cloudaccount")
 	group, err := self.GetOrCreateCloudgroup(ctx, userCred, iGroup)
 	if err != nil {
 		return nil, errors.Wrap(err, "GetOrCreateCloudgroup")
@@ -1398,6 +1465,7 @@ func (self *SCloudaccount) newCloudgroup(ctx context.Context, userCred mcclient.
 }
 
 func (self *SCloudaccount) GetSystemPolicyByExternalId(id string) (*SCloudpolicy, error) {
+    kebug.Info("cloudid-cloudaccount")
 	policies := []SCloudpolicy{}
 	q := CloudpolicyManager.Query().Equals("external_id", id).Equals("provider", self.Provider).Equals("policy_type", api.CLOUD_POLICY_TYPE_SYSTEM)
 	err := db.FetchModelObjects(CloudpolicyManager, q, &policies)
@@ -1414,6 +1482,7 @@ func (self *SCloudaccount) GetSystemPolicyByExternalId(id string) (*SCloudpolicy
 }
 
 func (self *SCloudaccount) GetCustomPolicyByExternalId(id string) (*SCloudpolicy, error) {
+    kebug.Info("cloudid-cloudaccount")
 	policies := []SCloudpolicy{}
 	sq := CloudpolicycacheManager.Query("cloudpolicy_id").Equals("cloudaccount_id", self.Id).Equals("external_id", id)
 	q := CloudpolicyManager.Query().In("id", sq.SubQuery())
@@ -1431,6 +1500,7 @@ func (self *SCloudaccount) GetCustomPolicyByExternalId(id string) (*SCloudpolicy
 }
 
 func (self *SCloudaccount) GetOrCreateCloudgroup(ctx context.Context, userCred mcclient.TokenCredential, iGroup cloudprovider.ICloudgroup) (*SCloudgroup, error) {
+    kebug.Info("cloudid-cloudaccount")
 	groups, err := self.GetCloudgroups()
 	if err != nil {
 		return nil, errors.Wrap(err, "GetCloudgroups")
@@ -1483,6 +1553,7 @@ func (self *SCloudaccount) GetOrCreateCloudgroup(ctx context.Context, userCred m
 }
 
 func (self *SCloudaccount) getOrCacheCustomCloudpolicy(ctx context.Context, providerId, policyId string) error {
+    kebug.Info("cloudid-cloudaccount")
 	cache, err := CloudpolicycacheManager.Register(ctx, self.Id, providerId, policyId)
 	if err != nil {
 		return errors.Wrapf(err, "Register")
@@ -1491,6 +1562,7 @@ func (self *SCloudaccount) getOrCacheCustomCloudpolicy(ctx context.Context, prov
 }
 
 func (self *SCloudaccount) SyncCustomCloudpoliciesForCloud(ctx context.Context, userCred mcclient.TokenCredential, clouduser *SClouduser) error {
+    kebug.Info("cloudid-cloudaccount")
 	factory, err := self.GetProviderFactory()
 	if err != nil {
 		return errors.Wrap(err, "GetProviderFactory")
@@ -1597,6 +1669,7 @@ func (self *SCloudaccount) SyncCustomCloudpoliciesForCloud(ctx context.Context, 
 }
 
 func (self *SCloudaccount) SyncSystemCloudpoliciesForCloud(ctx context.Context, userCred mcclient.TokenCredential, clouduser *SClouduser) error {
+    kebug.Info("cloudid-cloudaccount")
 	factory, err := self.GetProviderFactory()
 	if err != nil {
 		return errors.Wrap(err, "GetProviderFactory")
@@ -1691,6 +1764,7 @@ func (self *SCloudaccount) SyncSystemCloudpoliciesForCloud(ctx context.Context, 
 }
 
 func (self *SCloudaccount) GetLocalCloudroles(userId, groupId string, spId string, grouped bool) ([]SCloudrole, error) {
+    kebug.Info("cloudid-cloudaccount")
 	roles := []SCloudrole{}
 	q := CloudroleManager.Query().Equals("cloudaccount_id", self.Id).Equals("saml_provider_id", spId)
 	if grouped {
@@ -1706,6 +1780,7 @@ func (self *SCloudaccount) GetLocalCloudroles(userId, groupId string, spId strin
 }
 
 func (self *SCloudaccount) RegisterCloudroles(userId string, grouped bool, spId string) ([]SCloudrole, error) {
+    kebug.Info("cloudid-cloudaccount")
 	samlUsers, err := self.GetSamlusers()
 	if err != nil {
 		return nil, errors.Wrapf(err, "GetSamlusers")
@@ -1758,6 +1833,7 @@ func (self *SCloudaccount) RegisterCloudroles(userId string, grouped bool, spId 
 }
 
 func (self *SCloudaccount) getCloudrolesForSync(userId string, grouped bool) ([]SCloudrole, error) {
+    kebug.Info("cloudid-cloudaccount")
 	sp, valid := self.IsSAMLProviderValid()
 	if !valid {
 		return nil, fmt.Errorf("SAMLProvider for account %s not ready", self.Id)
@@ -1767,6 +1843,7 @@ func (self *SCloudaccount) getCloudrolesForSync(userId string, grouped bool) ([]
 }
 
 func (self *SCloudaccount) SyncRoles(userId string, grouped bool) ([]SCloudrole, error) {
+    kebug.Info("cloudid-cloudaccount")
 	roles, err := self.getCloudrolesForSync(userId, grouped)
 	if err != nil {
 		return nil, errors.Wrapf(err, "GetCloudrole")
@@ -1787,6 +1864,7 @@ func (self *SCloudaccount) SyncRoles(userId string, grouped bool) ([]SCloudrole,
 }
 
 func (self *SCloudaccount) GetCloudroles() ([]SCloudrole, error) {
+    kebug.Info("cloudid-cloudaccount")
 	roles := []SCloudrole{}
 	q := CloudroleManager.Query().Equals("cloudaccount_id", self.Id)
 	err := db.FetchModelObjects(CloudroleManager, q, &roles)
@@ -1797,6 +1875,7 @@ func (self *SCloudaccount) GetCloudroles() ([]SCloudrole, error) {
 }
 
 func (self *SCloudaccount) newCloudrole(ctx context.Context, userCred mcclient.TokenCredential, iRole cloudprovider.ICloudrole) error {
+    kebug.Info("cloudid-cloudaccount")
 	role := &SCloudrole{}
 	role.SetModelManager(CloudroleManager, role)
 	role.Name = iRole.GetName()
@@ -1816,6 +1895,7 @@ func (self *SCloudaccount) newCloudrole(ctx context.Context, userCred mcclient.T
 }
 
 func (self *SCloudaccount) SyncCloudroles(ctx context.Context, userCred mcclient.TokenCredential, exts []cloudprovider.ICloudrole) compare.SyncResult {
+    kebug.Info("cloudid-cloudaccount")
 	result := compare.SyncResult{}
 
 	roles, err := self.GetCloudroles()
@@ -1866,6 +1946,7 @@ func (self *SCloudaccount) SyncCloudroles(ctx context.Context, userCred mcclient
 }
 
 func (self *SCloudaccount) GetUserCloudgroups(userId string) ([]string, error) {
+    kebug.Info("cloudid-cloudaccount")
 	ret := []string{}
 	q := CloudgroupManager.Query()
 	samlusers := SamluserManager.Query("cloudgroup_id").Equals("owner_id", userId).Equals("cloudaccount_id", self.Id).SubQuery()
@@ -1902,6 +1983,7 @@ func (self *SCloudaccount) GetUserCloudgroups(userId string) ([]string, error) {
 }
 
 func (self *SCloudaccount) InviteAzureUser(ctx context.Context, userCred mcclient.TokenCredential, domain string) (string, error) {
+    kebug.Info("cloudid-cloudaccount")
 	samlUsers, err := self.GetSamlusers()
 	if err != nil {
 		return "", errors.Wrapf(err, "GetSamlusers")

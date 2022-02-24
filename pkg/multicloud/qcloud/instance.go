@@ -35,6 +35,7 @@ import (
 	"yunion.io/x/onecloud/pkg/cloudprovider"
 	"yunion.io/x/onecloud/pkg/multicloud"
 	"yunion.io/x/onecloud/pkg/util/billing"
+	"yunion.io/x/onecloud/pkg/util/kebug"
 	"yunion.io/x/onecloud/pkg/util/stringutils2"
 )
 
@@ -134,6 +135,7 @@ type SInstance struct {
 }
 
 func (self *SRegion) GetInstances(zoneId string, ids []string, offset int, limit int) ([]SInstance, int, error) {
+	kebug.Info("qcloud/instance.go")
 	params := make(map[string]string)
 	if limit < 1 || limit > 50 {
 		limit = 50

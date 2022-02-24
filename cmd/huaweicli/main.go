@@ -50,6 +50,7 @@ func getSubcommandParser() (*structarg.ArgumentParser, error) {
 	if subcmd == nil {
 		return nil, fmt.Errorf("No subcommand argument.")
 	}
+
 	type HelpOptions struct {
 		SUBCOMMAND string `help:"sub-command name"`
 	}

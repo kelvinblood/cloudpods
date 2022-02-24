@@ -24,9 +24,11 @@ import (
 	_ "yunion.io/x/onecloud/pkg/mcclient/modules/notify"
 	_ "yunion.io/x/onecloud/pkg/mcclient/modules/webconsole"
 	_ "yunion.io/x/onecloud/pkg/mcclient/modules/yunionconf"
+	"yunion.io/x/onecloud/pkg/util/kebug"
 )
 
 func init() {
+	kebug.Info("yunionconf")
 	modules.InitUsages()
 	modules.Usages.RegisterManager(modules.UsageManagerK8s, k8s.Usages)
 }

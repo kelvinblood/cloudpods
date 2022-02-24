@@ -29,6 +29,7 @@ import (
 	"yunion.io/x/onecloud/pkg/multicloud/huawei/client/auth"
 	"yunion.io/x/onecloud/pkg/multicloud/huawei/client/auth/credentials"
 	"yunion.io/x/onecloud/pkg/multicloud/huawei/obs"
+	"yunion.io/x/onecloud/pkg/util/kebug"
 )
 
 /*
@@ -124,6 +125,7 @@ func NewHuaweiClient(cfg *HuaweiClientConfig) (*SHuaweiClient, error) {
 }
 
 func (self *SHuaweiClient) init() error {
+	kebug.Info("huawei.go")
 	err := self.fetchRegions()
 	if err != nil {
 		return err
@@ -307,6 +309,7 @@ func (self *SHuaweiClient) UpdateAccount(accessKey, secret string) error {
 }
 
 func (self *SHuaweiClient) GetRegions() []SRegion {
+	kebug.Info("huawei.go")
 	regions := make([]SRegion, len(self.iregions))
 	for i := 0; i < len(regions); i += 1 {
 		region := self.iregions[i].(*SRegion)
@@ -521,6 +524,7 @@ func (self *SHuaweiClient) GetCapabilities() []string {
 }
 
 func (self *SHuaweiClient) GetUserId() (string, error) {
+	kebug.Info("huawei.go")
 	client, err := self.newGeneralAPIClient()
 	if err != nil {
 		return "", errors.Wrap(err, "SHuaweiClient.GetUserId.newGeneralAPIClient")

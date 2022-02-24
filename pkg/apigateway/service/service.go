@@ -28,10 +28,13 @@ import (
 	app_common "yunion.io/x/onecloud/pkg/cloudcommon/app"
 	common_options "yunion.io/x/onecloud/pkg/cloudcommon/options"
 	"yunion.io/x/onecloud/pkg/mcclient"
+	"yunion.io/x/onecloud/pkg/util/kebug"
 )
 
 func StartService() {
+	kebug.Info("service.go")
 	options.Options = &options.GatewayOptions{}
+	// 自己实现了路由的一些变量存储。
 	opts := options.Options
 	baseOpts := &opts.BaseOptions
 	commonOpts := &opts.CommonOptions

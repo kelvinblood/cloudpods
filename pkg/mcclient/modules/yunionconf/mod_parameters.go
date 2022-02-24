@@ -24,6 +24,7 @@ import (
 	"yunion.io/x/onecloud/pkg/mcclient/auth"
 	"yunion.io/x/onecloud/pkg/mcclient/modulebase"
 	"yunion.io/x/onecloud/pkg/mcclient/modules"
+	"yunion.io/x/onecloud/pkg/util/kebug"
 )
 
 type ParametersManager struct {
@@ -35,6 +36,7 @@ var (
 )
 
 func init() {
+	kebug.Info("parameters.go")
 	Parameters = ParametersManager{modules.NewYunionConfManager("parameter", "parameters",
 		[]string{"id", "created_at", "update_at", "name", "value"},
 		[]string{"namespace", "namespace_id", "created_by", "updated_by"},

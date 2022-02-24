@@ -33,6 +33,7 @@ import (
 	"yunion.io/x/onecloud/pkg/cloudprovider"
 	"yunion.io/x/onecloud/pkg/multicloud"
 	"yunion.io/x/onecloud/pkg/util/billing"
+	"yunion.io/x/onecloud/pkg/util/kebug"
 	"yunion.io/x/onecloud/pkg/util/stringutils2"
 )
 
@@ -520,6 +521,7 @@ func (self *SInstance) DetachDisk(ctx context.Context, diskId string) error {
 }
 
 func (self *SRegion) GetInstance(instanceId string) (*SInstance, error) {
+	kebug.Info("aliyun/instance.go")
 	instances, _, err := self.GetInstances("", []string{instanceId}, 0, 1)
 	if err != nil {
 		return nil, err
@@ -535,6 +537,7 @@ func (self *SRegion) CreateInstance(name string, imageId string, instanceType st
 	keypair string, userData string, bc *billing.SBillingCycle, projectId, osType string,
 	tags map[string]string, publicIp cloudprovider.SPublicIpInfo,
 ) (string, error) {
+	kebug.Info("aliyun/instance.go")
 	params := make(map[string]string)
 	params["RegionId"] = self.RegionId
 	params["ImageId"] = imageId

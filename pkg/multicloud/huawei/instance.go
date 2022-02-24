@@ -37,6 +37,7 @@ import (
 	"yunion.io/x/onecloud/pkg/multicloud/huawei/client/modules"
 	"yunion.io/x/onecloud/pkg/util/billing"
 	"yunion.io/x/onecloud/pkg/util/cloudinit"
+	"yunion.io/x/onecloud/pkg/util/kebug"
 )
 
 const (
@@ -769,6 +770,7 @@ func (self *SInstance) Renew(bc billing.SBillingCycle) error {
 
 // https://support.huaweicloud.com/api-ecs/zh-cn_topic_0094148850.html
 func (self *SRegion) GetInstances() ([]SInstance, error) {
+	kebug.Info("huwei/instance.go")
 	queries := make(map[string]string)
 
 	if len(self.client.projectId) > 0 {
@@ -781,12 +783,14 @@ func (self *SRegion) GetInstances() ([]SInstance, error) {
 }
 
 func (self *SRegion) GetInstanceByID(instanceId string) (SInstance, error) {
+	kebug.Info("huwei/instance.go")
 	instance := SInstance{}
 	err := DoGet(self.ecsClient.Servers.Get, instanceId, nil, &instance)
 	return instance, err
 }
 
 func (self *SRegion) GetInstanceByIds(ids []string) ([]SInstance, int, error) {
+	kebug.Info("huwei/instance.go")
 	instances := make([]SInstance, 0)
 	for _, instanceId := range ids {
 		instance, err := self.GetInstanceByID(instanceId)

@@ -17,10 +17,12 @@ package main
 import (
 	"yunion.io/x/onecloud/pkg/apigateway/service"
 	"yunion.io/x/onecloud/pkg/util/atexit"
+	"yunion.io/x/onecloud/pkg/util/kebug"
 )
 
 func main() {
 	defer atexit.Handle()
 
+	kebug.Info("main.go")
 	service.StartService()
 }

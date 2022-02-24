@@ -41,6 +41,7 @@ import (
 	"yunion.io/x/onecloud/pkg/i18n"
 	"yunion.io/x/onecloud/pkg/proxy"
 	"yunion.io/x/onecloud/pkg/util/httputils"
+	"yunion.io/x/onecloud/pkg/util/kebug"
 )
 
 type Application struct {
@@ -236,6 +237,7 @@ func (app *Application) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 		skipLog = true
 	}
 	if !skipLog {
+		kebug.Info("appsrv.go")
 		log.Infof("%s %d %s %s %s (%s) %.2fms", app.hostId, lrw.status, rid, r.Method, r.URL, r.RemoteAddr, duration)
 	}
 }
@@ -406,6 +408,7 @@ func timeoutHandle(h http.Handler) http.HandlerFunc {
 }
 
 func (app *Application) initServer(addr string) *http.Server {
+	kebug.Info("appsrv.go")
 	/* db := AppContextDB(app.context)
 	if db != nil {
 		db.SetMaxIdleConns(app.connMax + 1)

@@ -29,6 +29,7 @@ import (
 	"yunion.io/x/onecloud/pkg/mcclient"
 	"yunion.io/x/onecloud/pkg/mcclient/modulebase"
 	"yunion.io/x/onecloud/pkg/util/excelutils"
+	"yunion.io/x/onecloud/pkg/util/kebug"
 )
 
 const (
@@ -54,10 +55,12 @@ type ResourceHandlers struct {
 }
 
 func NewResourceHandlers(prefix string) *ResourceHandlers {
+	kebug.Info("resource.go")
 	return &ResourceHandlers{NewHandlers(prefix)}
 }
 
 func (f *ResourceHandlers) AddGet(mf appsrv.MiddlewareFunc) *ResourceHandlers {
+	kebug.Info("resource.go")
 	hs := []HandlerPath{
 		// list and joint list
 		NewHP(f.listHandler, APIVer, ResName),
@@ -75,6 +78,8 @@ func (f *ResourceHandlers) AddGet(mf appsrv.MiddlewareFunc) *ResourceHandlers {
 }
 
 func (f *ResourceHandlers) AddPost(mf appsrv.MiddlewareFunc) *ResourceHandlers {
+
+	kebug.Info("resource.go")
 	hs := []HandlerPath{
 		// create, create multi
 		NewHP(f.createHandler, APIVer, ResName),
@@ -90,6 +95,7 @@ func (f *ResourceHandlers) AddPost(mf appsrv.MiddlewareFunc) *ResourceHandlers {
 }
 
 func (f *ResourceHandlers) AddPut(mf appsrv.MiddlewareFunc) *ResourceHandlers {
+	kebug.Info("resource.go")
 	hs := []HandlerPath{
 		// batchPut
 		NewHP(f.batchUpdateHandler, APIVer, ResName),
@@ -107,6 +113,7 @@ func (f *ResourceHandlers) AddPut(mf appsrv.MiddlewareFunc) *ResourceHandlers {
 }
 
 func (f *ResourceHandlers) AddPatch(mf appsrv.MiddlewareFunc) *ResourceHandlers {
+    kebug.Info("resource.go")
 	hs := []HandlerPath{
 		// batchPatch
 		NewHP(f.batchPatchHandler, APIVer, ResName),
@@ -122,6 +129,7 @@ func (f *ResourceHandlers) AddPatch(mf appsrv.MiddlewareFunc) *ResourceHandlers 
 }
 
 func (f *ResourceHandlers) AddDelete(mf appsrv.MiddlewareFunc) *ResourceHandlers {
+    kebug.Info("resource.go")
 	hs := []HandlerPath{
 		// batchDelete
 		NewHP(f.batchDeleteHandler, APIVer, ResName),
@@ -139,6 +147,7 @@ func (f *ResourceHandlers) AddDelete(mf appsrv.MiddlewareFunc) *ResourceHandlers
 }
 
 func fetchIdList(ctx context.Context, query jsonutils.JSONObject, w http.ResponseWriter) []string {
+    kebug.Info("resource.go")
 	idlist, e := query.GetArray("id")
 	if e == nil && len(idlist) > 0 {
 		queryDict := query.(*jsonutils.JSONDict)
@@ -156,6 +165,8 @@ func fetchIdList(ctx context.Context, query jsonutils.JSONObject, w http.Respons
 // joint list
 // /<resname>
 func (f *ResourceHandlers) listHandler(ctx context.Context, w http.ResponseWriter, r *http.Request) {
+    // kebug.Info("resource.go")
+	// 这里就是作透传吧，啥事不干。
 	req := newRequest(ctx, w, r)
 	if req.Error() != nil {
 		httperrors.GeneralServerError(ctx, w, req.Error())
@@ -189,6 +200,7 @@ func (f *ResourceHandlers) listHandler(ctx context.Context, w http.ResponseWrite
 }
 
 func (f *ResourceHandlers) doList(ctx context.Context, session *mcclient.ClientSession, module modulebase.IBaseManager, query jsonutils.JSONObject, w http.ResponseWriter, r *http.Request) {
+    // kebug.Info("resource.go")
 	var exportKeys []string
 	var exportTexts []string
 	export := struct {
@@ -252,6 +264,7 @@ func (f *ResourceHandlers) doList(ctx context.Context, session *mcclient.ClientS
 // get single
 // /<resname>/<resid>
 func (f *ResourceHandlers) getHandler(ctx context.Context, w http.ResponseWriter, r *http.Request) {
+    kebug.Info("resource.go")
 	req := newRequest(ctx, w, r).WithMod1()
 	if err := req.Error(); err != nil {
 		httperrors.GeneralServerError(ctx, w, err)
@@ -271,6 +284,7 @@ func (f *ResourceHandlers) getHandler(ctx context.Context, w http.ResponseWriter
 // /<resname>/<resid>/<spec>
 // /<resname>/<resid>/<resname2>
 func (f *ResourceHandlers) getSpecHandler(ctx context.Context, w http.ResponseWriter, r *http.Request) {
+    kebug.Info("resource.go")
 	req := newRequest(ctx, w, r).WithMod1()
 	if err := req.Error(); err != nil {
 		httperrors.GeneralServerError(ctx, w, err)
@@ -307,6 +321,7 @@ func (f *ResourceHandlers) getSpecHandler(ctx context.Context, w http.ResponseWr
 // joint get
 // /<resname>/<resid>/<resname2>/<resid2>
 func (f *ResourceHandlers) getJointHandler(ctx context.Context, w http.ResponseWriter, r *http.Request) {
+    kebug.Info("resource.go")
 	req := newRequest(ctx, w, r).WithMod1().WithMod2()
 	if err := req.Error(); err != nil {
 		httperrors.GeneralServerError(ctx, w, err)
@@ -333,6 +348,7 @@ func (f *ResourceHandlers) getJointHandler(ctx context.Context, w http.ResponseW
 // list in 2 context
 // /<resname>/<resid>/<resname2>/<resid2>/<resnam3>
 func (f *ResourceHandlers) listInContextsHandler(ctx context.Context, w http.ResponseWriter, r *http.Request) {
+    kebug.Info("resource.go")
 	req := newRequest(ctx, w, r).WithMod1().WithMod2().WithMod3()
 	if err := req.Error(); err != nil {
 		httperrors.GeneralServerError(ctx, w, err)
@@ -358,6 +374,7 @@ func (f *ResourceHandlers) listInContextsHandler(ctx context.Context, w http.Res
 // create multi
 // /<resname>
 func (f *ResourceHandlers) createHandler(ctx context.Context, w http.ResponseWriter, r *http.Request) {
+    kebug.Info("resource.go")
 	req := newRequest(ctx, w, r).WithMod1()
 	if err := req.Error(); err != nil {
 		httperrors.GeneralServerError(ctx, w, err)
@@ -391,6 +408,7 @@ func (f *ResourceHandlers) createHandler(ctx context.Context, w http.ResponseWri
 // batch performAction
 // /<resname>/<action>
 func (f *ResourceHandlers) batchPerformActionHandler(ctx context.Context, w http.ResponseWriter, r *http.Request) {
+    kebug.Info("resource.go")
 	req := newRequest(ctx, w, r).WithMod1()
 	if err := req.Error(); err != nil {
 		httperrors.GeneralServerError(ctx, w, err)
@@ -419,6 +437,7 @@ func (f *ResourceHandlers) batchPerformActionHandler(ctx context.Context, w http
 // batch Attach
 // /<resname>/<resid>/<action>
 func (f *ResourceHandlers) performActionHandler(ctx context.Context, w http.ResponseWriter, r *http.Request) {
+    kebug.Info("resource.go")
 	req := newRequest(ctx, w, r).WithMod1()
 	if err := req.Error(); err != nil {
 		httperrors.GeneralServerError(ctx, w, err)
@@ -465,6 +484,7 @@ func (f *ResourceHandlers) performActionHandler(ctx context.Context, w http.Resp
 // joint attach
 // /<resname>/<resid>/<resname2>/<resid2>
 func (f *ResourceHandlers) attachHandler(ctx context.Context, w http.ResponseWriter, r *http.Request) {
+    kebug.Info("resource.go")
 	req := newRequest(ctx, w, r).WithMod1().WithMod2()
 	if err := req.Error(); err != nil {
 		httperrors.GeneralServerError(ctx, w, err)
@@ -491,6 +511,7 @@ func (f *ResourceHandlers) attachHandler(ctx context.Context, w http.ResponseWri
 // batchPut
 // PUT /<resname>
 func (f *ResourceHandlers) batchUpdateHandler(ctx context.Context, w http.ResponseWriter, r *http.Request) {
+    kebug.Info("resource.go")
 	req := newRequest(ctx, w, r).WithMod1()
 	if err := req.Error(); err != nil {
 		httperrors.GeneralServerError(ctx, w, err)
@@ -524,6 +545,7 @@ func (f *ResourceHandlers) batchUpdateHandler(ctx context.Context, w http.Respon
 // batchPatch
 // PATCH /<resname>/<resid>
 func (f *ResourceHandlers) batchPatchHandler(ctx context.Context, w http.ResponseWriter, r *http.Request) {
+    kebug.Info("resource.go")
 	req := newRequest(ctx, w, r).WithMod1()
 	if err := req.Error(); err != nil {
 		httperrors.GeneralServerError(ctx, w, err)
@@ -547,6 +569,7 @@ func (f *ResourceHandlers) batchPatchHandler(ctx context.Context, w http.Respons
 // put single
 // PUT /<resname>/<resid>
 func (f *ResourceHandlers) updateHandler(ctx context.Context, w http.ResponseWriter, r *http.Request) {
+    kebug.Info("resource.go")
 	req := newRequest(ctx, w, r).WithMod1()
 	if err := req.Error(); err != nil {
 		httperrors.GeneralServerError(ctx, w, err)
@@ -567,6 +590,7 @@ func (f *ResourceHandlers) updateHandler(ctx context.Context, w http.ResponseWri
 // patch single
 // PATCH /<resname>/<resid>
 func (f *ResourceHandlers) patchHandler(ctx context.Context, w http.ResponseWriter, r *http.Request) {
+    kebug.Info("resource.go")
 	req := newRequest(ctx, w, r).WithMod1()
 	if err := req.Error(); err != nil {
 		httperrors.GeneralServerError(ctx, w, err)
@@ -588,6 +612,7 @@ func (f *ResourceHandlers) patchHandler(ctx context.Context, w http.ResponseWrit
 // update in context
 // PUT /<resname>/<resid>/<resname2>/<resid2>
 func (f *ResourceHandlers) updateJointHandler(ctx context.Context, w http.ResponseWriter, r *http.Request) {
+    kebug.Info("resource.go")
 	req := newRequest(ctx, w, r).WithMod1().WithMod2()
 	if err := req.Error(); err != nil {
 		httperrors.GeneralServerError(ctx, w, err)
@@ -613,6 +638,7 @@ func (f *ResourceHandlers) updateJointHandler(ctx context.Context, w http.Respon
 }
 
 func (f *ResourceHandlers) patchJointHandler(ctx context.Context, w http.ResponseWriter, r *http.Request) {
+    kebug.Info("resource.go")
 	req := newRequest(ctx, w, r).WithMod1().WithMod2()
 	if err := req.Error(); err != nil {
 		httperrors.GeneralServerError(ctx, w, err)
@@ -642,6 +668,7 @@ func (f *ResourceHandlers) patchJointHandler(ctx context.Context, w http.Respons
 // /<resname>/<resid>/<resname2>
 // /<resname>/<resid>/<spec>
 func (f *ResourceHandlers) batchUpdateJointHandler(ctx context.Context, w http.ResponseWriter, r *http.Request) {
+    kebug.Info("resource.go")
 	req := newRequest(ctx, w, r).WithMod1()
 	if err := req.Error(); err != nil {
 		httperrors.GeneralServerError(ctx, w, err)
@@ -684,6 +711,7 @@ func (f *ResourceHandlers) batchUpdateJointHandler(ctx context.Context, w http.R
 // update in contexts
 // /<resname>/<resid>/<resname2>/<resid2>/<resname3>/<resid3>
 func (f *ResourceHandlers) updateInContextsHandler(ctx context.Context, w http.ResponseWriter, r *http.Request) {
+    kebug.Info("resource.go")
 	req := newRequest(ctx, w, r).WithMod1().WithMod2().WithMod3()
 	if err := req.Error(); err != nil {
 		httperrors.GeneralServerError(ctx, w, err)
@@ -702,6 +730,7 @@ func (f *ResourceHandlers) updateInContextsHandler(ctx context.Context, w http.R
 }
 
 func (f *ResourceHandlers) patchInContextsHandler(ctx context.Context, w http.ResponseWriter, r *http.Request) {
+    kebug.Info("resource.go")
 	req := newRequest(ctx, w, r).WithMod1().WithMod2().WithMod3()
 	if err := req.Error(); err != nil {
 		httperrors.GeneralServerError(ctx, w, err)
@@ -727,6 +756,7 @@ func (f *ResourceHandlers) patchInContextsHandler(ctx context.Context, w http.Re
 // batchDelete
 // DELETE /<resname>
 func (f *ResourceHandlers) batchDeleteHandler(ctx context.Context, w http.ResponseWriter, r *http.Request) {
+    kebug.Info("resource.go")
 	req := newRequest(ctx, w, r).WithMod1()
 	if err := req.Error(); err != nil {
 		httperrors.GeneralServerError(ctx, w, err)
@@ -745,6 +775,7 @@ func (f *ResourceHandlers) batchDeleteHandler(ctx context.Context, w http.Respon
 // delete single
 // DELETE /<resname>/<resid>
 func (f *ResourceHandlers) deleteHandler(ctx context.Context, w http.ResponseWriter, r *http.Request) {
+    kebug.Info("resource.go")
 	req := newRequest(ctx, w, r).WithMod1()
 	if err := req.Error(); err != nil {
 		httperrors.GeneralServerError(ctx, w, err)
@@ -761,6 +792,7 @@ func (f *ResourceHandlers) deleteHandler(ctx context.Context, w http.ResponseWri
 // batch detach
 // /<resname>/<resid>/<resname2>
 func (f *ResourceHandlers) batchDetachHandler(ctx context.Context, w http.ResponseWriter, r *http.Request) {
+    kebug.Info("resource.go")
 	req := newRequest(ctx, w, r).WithMod1().WithMod2()
 	if err := req.Error(); err != nil {
 		httperrors.GeneralServerError(ctx, w, err)
@@ -793,6 +825,7 @@ func (f *ResourceHandlers) batchDetachHandler(ctx context.Context, w http.Respon
 // delete in context
 // DELETE /<resname>/<resid>/<resname2>/<resid2>
 func (f *ResourceHandlers) detachHandle(ctx context.Context, w http.ResponseWriter, r *http.Request) {
+    kebug.Info("resource.go")
 	req := newRequest(ctx, w, r).WithMod1().WithMod2()
 	if err := req.Error(); err != nil {
 		httperrors.GeneralServerError(ctx, w, err)
@@ -819,6 +852,7 @@ func (f *ResourceHandlers) detachHandle(ctx context.Context, w http.ResponseWrit
 // delete in contexts
 // DELETE /<resname>/<resid>/<resname2>/<resid2>/<resname3>/<resid3>
 func (f *ResourceHandlers) deleteInContextsHandler(ctx context.Context, w http.ResponseWriter, r *http.Request) {
+    kebug.Info("resource.go")
 	req := newRequest(ctx, w, r).WithMod1().WithMod2().WithMod3()
 	if err := req.Error(); err != nil {
 		httperrors.GeneralServerError(ctx, w, err)

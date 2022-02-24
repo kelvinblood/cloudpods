@@ -18,6 +18,7 @@ import (
 	"yunion.io/x/onecloud/pkg/apigateway/handler"
 	"yunion.io/x/onecloud/pkg/apis/cloudid"
 	"yunion.io/x/onecloud/pkg/appsrv"
+	"yunion.io/x/onecloud/pkg/util/kebug"
 )
 
 type Application struct {
@@ -41,6 +42,7 @@ func NewApp(app *appsrv.Application) *Application {
 }
 
 func (app *Application) InitHandlers() *Application {
+	kebug.Info("app.go")
 	// bind auth handlers
 	app.AuthHandler = handler.NewAuthHandlers("/api/v1/auth", nil)
 
@@ -84,6 +86,7 @@ func (app *Application) Bind() {
 		app.ResourceHandler,
 		app.CSRFResourceHandler,
 	} {
+		kebug.Info("app.go")
 		h.Bind(app.Application)
 	}
 }
