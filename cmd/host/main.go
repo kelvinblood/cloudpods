@@ -23,6 +23,7 @@ import (
 	"yunion.io/x/onecloud/pkg/util/procutils"
 )
 
+// 私有云虚机管理服务
 func main() {
 	defer atexit.Handle()
 

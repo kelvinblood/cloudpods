@@ -31,6 +31,7 @@ import (
 	"yunion.io/x/onecloud/pkg/util/shellutils"
 )
 
+// redfish协议介绍：https://zhuanlan.zhihu.com/p/145587345 ，该工具对标ipmicli
 type BaseOptions struct {
 	Debug      bool   `help:"debug mode"`
 	Help       bool   `help:"Show help"`

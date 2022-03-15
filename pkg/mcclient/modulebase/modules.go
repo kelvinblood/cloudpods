@@ -190,6 +190,7 @@ func ensureModuleNotRegistered(mod, newMod IBaseManager) {
 	}
 }
 
+// modules demo : v2 - cloudaccounts - IBaseManager{31bc50dd-a98d-4c18-8628-ba8787a063e2}
 func Register(version string, mod IBaseManager) {
 	if modules == nil {
 		modules = make(map[string]map[string][]IBaseManager)
@@ -248,6 +249,7 @@ func registerAllJointModules() {
 	}
 }
 
+// 使用 modules 的地方
 func _getModule(session *mcclient.ClientSession, name string) (IBaseManager, error) {
 	modtable, ok := modules[session.GetApiVersion()]
 	if !ok {

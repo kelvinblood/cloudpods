@@ -34,6 +34,7 @@ import (
 	"yunion.io/x/onecloud/pkg/util/shellutils"
 )
 
+// Google 云 GAE
 type BaseOptions struct {
 	Debug        bool   `help:"debug mode"`
 	Help         bool   `help:"Show help"`

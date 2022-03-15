@@ -35,17 +35,22 @@ func StartService() {
 	opts := options.Options
 	baseOpts := &opts.BaseOptions
 	commonOpts := &opts.CommonOptions
-	common_options.ParseOptions(opts, os.Args, "apigateway.conf", api.SERVICE_TYPE)
+	common_options.ParseOptions(opts, os.Args, "./apigateway.conf", api.SERVICE_TYPE)
+
+	// 认证模块初始化（异步），初步猜测cloudmon是针对所有云平台的监控相关的共有代码模块，该认证是apigateway作为keystone的admin访问keystone
 	app_common.InitAuth(commonOpts, func() {
 		log.Infof("Auth complete.")
 	})
 
+	// 同步所有底层服务的配置，目测 apigateway 这个服务组件是所有服务组件中最晚启动的，并且底层服务的配置变动或地址变动应该能够同步到 apigateway
+	// 所有api底层的manager注册的地方
 	common_options.StartOptionManager(opts, opts.ConfigSyncPeriodSeconds, api.SERVICE_TYPE, api.SERVICE_VERSION, options.OnOptionsChange)
 
 	if opts.DisableModuleApiVersion {
 		mcclient.DisableApiVersionByModule()
 	}
 
+	// 读取SSL密钥文件，设置rsa密钥
 	if err := clientman.InitClient(); err != nil {
 		log.Fatalf("Init client token manager: %v", err)
 	}

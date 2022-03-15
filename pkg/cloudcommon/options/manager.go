@@ -59,6 +59,7 @@ func StartOptionManager(option interface{}, refreshSeconds int, serviceType, ser
 
 func StartOptionManagerWithSessionDriver(options interface{}, refreshSeconds int, serviceType, serviceVersion string, onChange TOptionsChangeFunc, session IServiceConfigSession) {
 	log.Infof("OptionManager start to fetch service configs ...")
+	// 更新时间不得低于30秒
 	if refreshSeconds <= MIN_REFRESH_INTERVAL_SECONDS {
 		// a minimal 30 seconds refresh interval
 		refreshSeconds = MIN_REFRESH_INTERVAL_SECONDS
@@ -77,6 +78,7 @@ func StartOptionManagerWithSessionDriver(options interface{}, refreshSeconds int
 
 	OptionManager.FirstSync()
 
+	// mcclient 返回true
 	if session.IsRemote() {
 		OptionManager.StartWatching(&identity.ServicesV3)
 	}

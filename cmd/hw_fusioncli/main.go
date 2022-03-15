@@ -24,40 +24,46 @@ import (
 
 	"yunion.io/x/structarg"
 
-	"yunion.io/x/onecloud/pkg/cloudprovider"
-	"yunion.io/x/onecloud/pkg/multicloud/bingocloud"
-	_ "yunion.io/x/onecloud/pkg/multicloud/bingocloud/shell"
+	"yunion.io/x/onecloud/pkg/cloudprovider"                //
+	"yunion.io/x/onecloud/pkg/multicloud/hw_fusion"         // hw_fusion
+	_ "yunion.io/x/onecloud/pkg/multicloud/hw_fusion/shell" // hw_fusion
 	"yunion.io/x/onecloud/pkg/util/shellutils"
 )
 
-// 品高云 bingo 云 http://bingosoft.net/
+// X-Auth-User:ronly
+// X-Auth-Key:Admin@huawei123$
+// https://10.10.1.52:7443
+// 建议第三方系统将每分钟接口调用次数控制在300次以内，以保证系统的整体性能和稳定。QPS控制在300q/s
+// TODO 优先完成虚拟机部门的查询功能，查询虚拟机统计信息
+
+// 华为FusionCompute 私有云
 type BaseOptions struct {
-	Debug      bool `help:"debug mode"`
-	Help       bool `help:"Show help"`
-	RegionId   string
-	Endpoint   string `help:"Endpoint" default:"$BINGO_CLOUD_ENDPOINT" metavar:"BINGO_CLOUD_ENDPOINT"`
-	AccessKey  string `help:"Access Key" default:"$BINGO_CLOUD_ACCESS_KEY" metavar:"BINGO_CLOUD_ACCESS_KEY"`
-	SecretKey  string `help:"Secret Key" default:"$BINGO_CLOUD_SECRET_KEY" metavar:"BINGO_CLOUD_SECRET_KEY"`
-	SUBCOMMAND string `help:"bingocli subcommand" subcommand:"true"`
+	Help       bool   `help:"Show help" default:"false"`
+	Debug      bool   `help:"Show debug" default:"false"`
+	EndPoint   string `help:"Endpoint" default:"$HUAWEI_FUSION_COMPUTE_ENDPOINT" metavar:"$HUAWEI_FUSION_COMPUTE_ENDPOINT"`
+	User       string `help:"User" default:"$HUAWEI_FUSION_COMPUTE_USER" metavar:"HUAWEI_FUSION_COMPUTE_USER"`
+	Password   string `help:"Password" default:"$HUAWEI_FUSION_COMPUTE_PASSWORD" metavar:"HUAWEI_FUSION_COMPUTE_PASSWORD"`
+	RegionId   string `help:"RegionId" default:"$HUAWEI_FUSION_COMPUTE_REGION" metavar:"HUAWEI_FUSION_COMPUTE_REGION"`
+	SUBCOMMAND string `help:"hw_fusioncli subcommand" subcommand:"true"`
 }
 
 func getSubcommandParser() (*structarg.ArgumentParser, error) {
-	// 1. 解析命令行工具参数
+	// 生成一个命令行工具解析器
 	parse, e := structarg.NewArgumentParser(&BaseOptions{},
-		"bingocli",
-		"Command-line interface to bingo cloud API.",
-		`See "bingocli help COMMAND" for help on a specific command.`)
+		"hw_fusioncli",
+		"Command-line interface to Huawei Fusion Compute API.",
+		`See "hw_fusioncli help COMMAND" for help on a specific command.`)
 
 	if e != nil {
 		return nil, e
 	}
 
-	// 2. 获取 *SubcommandArgument 实例
 	subcmd := parse.GetSubcommand()
 	if subcmd == nil {
 		return nil, fmt.Errorf("No subcommand argument.")
 	}
-	// 为什么要在这里加这个help函数，是因为需要用到subcmd这个闭包，来写help的回调函数callback
+
+	// help 函数需要使用到subcmd的闭包
 	type HelpOptions struct {
 		SUBCOMMAND string `help:"sub-command name"`
 	}
@@ -70,7 +76,7 @@ func getSubcommandParser() (*structarg.ArgumentParser, error) {
 			return nil
 		}
 	})
-	// 把注册在 shellutils.CommandTable 的所有callback加入到subcmd中，完成整个工具的构建
+
 	for _, v := range shellutils.CommandTable {
 		_, e := subcmd.AddSubParser(v.Options, v.Command, v.Desc, v.Callback)
 		if e != nil {
@@ -86,20 +92,19 @@ func showErrorAndExit(e error) {
 	os.Exit(1)
 }
 
-func newClient(options *BaseOptions) (*bingocloud.SRegion, error) {
-	if len(options.Endpoint) == 0 {
+func newClient(options *BaseOptions) (*hw_fusion.SRegion, error) {
+	if len(options.EndPoint) == 0 {
 		return nil, fmt.Errorf("Missing endpoint")
 	}
 
-	if len(options.AccessKey) == 0 {
-		return nil, fmt.Errorf("Missing access key")
+	if len(options.User) == 0 {
+		return nil, fmt.Errorf("Missing user")
 	}
 
-	if len(options.SecretKey) == 0 {
-		return nil, fmt.Errorf("Missing secret key")
+	if len(options.Password) == 0 {
+		return nil, fmt.Errorf("Missing password")
 	}
 
-	// 从环境变量上判断是否需要 http 代理
 	cfg := &httpproxy.Config{
 		HTTPProxy:  os.Getenv("HTTP_PROXY"),
 		HTTPSProxy: os.Getenv("HTTPS_PROXY"),
@@ -110,11 +115,11 @@ func newClient(options *BaseOptions) (*bingocloud.SRegion, error) {
 		return cfgProxyFunc(req.URL)
 	}
 
-	cli, err := bingocloud.NewBingoCloudClient(
-		bingocloud.NewBingoCloudClientConfig(
-			options.Endpoint,
-			options.AccessKey,
-			options.SecretKey,
+	cli, err := hw_fusion.NewHwFusionComputeClient(
+		hw_fusion.NewHwFusionClientConfig(
+			options.EndPoint,
+			options.User,
+			options.Password,
 		).Debug(options.Debug).
 			CloudproviderConfig(
 				cloudprovider.ProviderConfig{
@@ -130,49 +135,41 @@ func newClient(options *BaseOptions) (*bingocloud.SRegion, error) {
 }
 
 func main() {
-	// 1. 获取一个命令行解析器，构建该cli基本软件
+	// 获取解析器
 	parser, e := getSubcommandParser()
 	if e != nil {
 		showErrorAndExit(e)
 	}
-	// 2. 解析命令行参数
 	e = parser.ParseArgs(os.Args[1:], false)
-
-	// 3. 判断是否是help命令，输出help内容
 	options := parser.Options().(*BaseOptions)
+
 	if options.Help {
 		fmt.Print(parser.HelpString())
-		return
-	}
-
-	// 4. 解析参数，错误处理
-	subcmd := parser.GetSubcommand()
-	subparser := subcmd.GetSubParser()
-	if e != nil {
-		if subparser != nil {
-			fmt.Print(subparser.Usage())
-		} else {
-			fmt.Print(parser.Usage())
-		}
-		showErrorAndExit(e)
-		return
-	}
-
-	// 5. 解析子选项
-	suboptions := subparser.Options()
-	if options.SUBCOMMAND == "help" {
-		e = subcmd.Invoke(suboptions)
 	} else {
-		var region *bingocloud.SRegion
-		region, e = newClient(options)
+		subcmd := parser.GetSubcommand()
+		subparser := subcmd.GetSubParser()
 		if e != nil {
+			if subparser != nil {
+				fmt.Print(subparser.Usage())
+			} else {
+				fmt.Print(parser.Usage())
+			}
 			showErrorAndExit(e)
-			return
+		} else {
+			suboptions := subparser.Options()
+			if options.SUBCOMMAND == "help" {
+				e = subcmd.Invoke(suboptions)
+			} else {
+				var region *hw_fusion.SRegion
+				region, e = newClient(options)
+				if e != nil {
+					showErrorAndExit(e)
+				}
+				e = subcmd.Invoke(region, suboptions)
+			}
+			if e != nil {
+				showErrorAndExit(e)
+			}
 		}
-		e = subcmd.Invoke(region, suboptions)
-	}
-	if e != nil {
-		showErrorAndExit(e)
-		return
 	}
 }

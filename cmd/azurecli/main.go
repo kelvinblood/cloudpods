@@ -31,6 +31,7 @@ import (
 	"yunion.io/x/onecloud/pkg/util/shellutils"
 )
 
+// 微软 Azure 云
 type BaseOptions struct {
 	Help           bool   `help:"Show help"`
 	Debug          bool   `help:"debug mode"`

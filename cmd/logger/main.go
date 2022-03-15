@@ -19,6 +19,7 @@ import (
 	"yunion.io/x/onecloud/pkg/util/atexit"
 )
 
+// 审计日志服务
 func main() {
 	defer atexit.Handle()
 

@@ -26,6 +26,7 @@ import (
 	"yunion.io/x/onecloud/pkg/util/shellutils"
 )
 
+// LDAP 服务命令行工具
 type BaseOptions struct {
 	Debug    bool   `help:"debug mode"`
 	Help     bool   `help:"Show help"`

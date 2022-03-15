@@ -22,6 +22,7 @@ import (
 	"yunion.io/x/onecloud/pkg/util/procutils"
 )
 
+// 物理机管理agent
 func main() {
 	defer atexit.Handle()
 

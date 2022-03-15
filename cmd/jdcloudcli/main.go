@@ -32,6 +32,7 @@ import (
 	"yunion.io/x/onecloud/pkg/util/shellutils"
 )
 
+// 京东云
 type Options struct {
 	Help         bool   `help:"Show help" default:"false"`
 	Debug        bool   `help:"Show debug" default:"false"`
