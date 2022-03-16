@@ -41,6 +41,7 @@ import (
 	"yunion.io/x/onecloud/pkg/util/procutils"
 )
 
+// 镜像服务
 func StartService() {
 	opts := &options.Options
 	commonOpts := &opts.CommonOptions

@@ -18,6 +18,7 @@ import (
 	"yunion.io/x/onecloud/pkg/keystone/service"
 )
 
+// keystone 认证权限管理服务
 func main() {
 	service.StartService()
 }

@@ -30,6 +30,7 @@ import (
 	"yunion.io/x/onecloud/pkg/util/shellutils"
 )
 
+// Alibaba Cloud Apsara Stack 阿里云专用云（分布式结构）
 type BaseOptions struct {
 	Debug                          bool   `help:"debug mode"`
 	Help                           bool   `help:"Show help"`

@@ -75,6 +75,7 @@ type SBingoCloudClient struct {
 	regions []SRegion
 }
 
+//  重点 该 client 可通过 cli 和 cloudprovider 调用，分别对应 bingocli 和 apigateway
 func NewBingoCloudClient(cfg *BingoCloudConfig) (*SBingoCloudClient, error) {
 	client := &SBingoCloudClient{BingoCloudConfig: cfg}
 	var err error

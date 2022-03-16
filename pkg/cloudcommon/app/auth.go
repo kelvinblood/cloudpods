@@ -68,8 +68,10 @@ func InitAuth(options *common_options.CommonOptions, authComplete auth.AuthCompl
 		auth.SetEndpointType(options.SessionEndpointType)
 	}
 
+	// 异步初始化一个 mcclient ，传给 authManager 作为认证备用，使用 LRU 算法缓存keystone获取的权限数据记录
 	auth.Init(a, options.DebugClient, true, options.SslCertfile, options.SslKeyfile) // , authComplete)
 
+	// 设置通知用户和通知组，notify client模块
 	users := options.NotifyAdminUsers
 	groups := options.NotifyAdminGroups
 	if len(users) == 0 && len(groups) == 0 {
@@ -77,17 +79,22 @@ func InitAuth(options *common_options.CommonOptions, authComplete auth.AuthCompl
 	}
 	notifyclient.FetchNotifyAdminRecipients(context.Background(), options.Region, users, groups)
 
+	// 回调函数 callback ，打印 Auth complete.
 	if authComplete != nil {
 		authComplete()
 	}
 
+	// 设置缓存过期时间
 	consts.SetTenantCacheExpireSeconds(options.TenantCacheExpireSeconds)
 
+	// 初始化 rbac 策略计算模块，加载缓存 policymanager: pkg/cloudcommon/policy/policy.go
 	InitBaseAuth(&options.BaseOptions)
 
+	// endpoint更新管理器（两小时更新一次），监听资源管理器，执行某些子任务
 	watcher := newEndpointChangeManager()
 	watcher.StartWatching(&identity_modules.EndpointsV3)
 
+	// 开启etcd puller
 	startEtcdEndpointPuller()
 }
 
@@ -105,6 +112,7 @@ func FetchEtcdServiceInfo() (*identity.EndpointDetails, error) {
 }
 
 func startEtcdEndpointPuller() {
+	// 疑问点，这个etcdURL获取后在哪里使用
 	retryInterval := 60
 	etecdUrl, err := auth.GetServiceURL(apis.SERVICE_TYPE_ETCD, consts.GetRegion(), "", "")
 	if err != nil {

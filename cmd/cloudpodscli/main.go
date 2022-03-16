@@ -30,6 +30,7 @@ import (
 	"yunion.io/x/onecloud/pkg/util/shellutils"
 )
 
+// cloudpods 暂时不知道接哪个云端
 type BaseOptions struct {
 	Debug        bool   `help:"debug mode"`
 	Help         bool   `help:"Show help"`

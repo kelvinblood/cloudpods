@@ -22,6 +22,7 @@ import (
 	"yunion.io/x/onecloud/pkg/util/procutils"
 )
 
+// Vwmare 管理服务
 func main() {
 	defer atexit.Handle()
 

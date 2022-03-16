@@ -35,6 +35,7 @@ func (self *SRegion) invoke(action string, params map[string]string) (jsonutils.
 }
 
 func (self *SBingoCloudClient) GetRegions() ([]SRegion, error) {
+	// 执行命令调用 DescribeRegions 实现探活，并获取全部可用region列表
 	resp, err := self.invoke("DescribeRegions", nil)
 	if err != nil {
 		return nil, err

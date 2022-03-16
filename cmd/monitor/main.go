@@ -18,6 +18,7 @@ import (
 	"yunion.io/x/onecloud/pkg/monitor/service"
 )
 
+// 监控告警服务，与 cloudmon 服务的区别暂未知
 func main() {
 	service.StartService()
 }

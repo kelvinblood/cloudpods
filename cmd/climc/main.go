@@ -39,6 +39,7 @@ import (
 	_ "yunion.io/x/onecloud/cmd/climc/shell/yunionconf"
 )
 
+// 所有云cli的命令行交互式工具
 func main() {
 	entry.ClimcMain()
 }

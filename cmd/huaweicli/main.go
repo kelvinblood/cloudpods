@@ -30,6 +30,7 @@ import (
 	"yunion.io/x/onecloud/pkg/util/shellutils"
 )
 
+// 华为云
 type BaseOptions struct {
 	Help       bool   `help:"Show help" default:"false"`
 	Debug      bool   `help:"Show debug" default:"false"`

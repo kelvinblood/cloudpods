@@ -82,6 +82,7 @@ var _ IModel = (*SOpsLog)(nil)
 var opslogQueryWorkerMan *appsrv.SWorkerManager
 var opslogWriteWorkerMan *appsrv.SWorkerManager
 
+// InitOpsLog 操作日志数据记录
 func InitOpsLog() {
 	if consts.OpsLogWithClickhouse {
 		OpsLog = &SOpsLogManager{NewModelBaseManagerWithDBName(

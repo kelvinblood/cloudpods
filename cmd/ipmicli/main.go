@@ -26,6 +26,7 @@ import (
 	"yunion.io/x/onecloud/pkg/util/ssh"
 )
 
+// 物理机管理服务cli
 type BaseOptions struct {
 	Help       bool   `help:"Show help" short-token:"h"`
 	MODE       string `help:"Execute command mode" choices:"ssh|rmcp"`

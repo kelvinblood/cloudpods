@@ -30,6 +30,7 @@ import (
 	"yunion.io/x/onecloud/pkg/util/shellutils"
 )
 
+// 路坦利私有云 https://www.nutanix.cn/?utm_source=Baidu&utm_medium=paid_search&utm_campaign=FY21Q4new
 type BaseOptions struct {
 	Debug      bool   `help:"debug mode"`
 	Help       bool   `help:"Show help"`

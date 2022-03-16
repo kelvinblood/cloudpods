@@ -30,6 +30,7 @@ import (
 	"yunion.io/x/onecloud/pkg/util/shellutils"
 )
 
+// 华为云
 type BaseOptions struct {
 	cloudprovider.SHCSOEndpoints
 	Help           bool   `help:"Show help" default:"false"`

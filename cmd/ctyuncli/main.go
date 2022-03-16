@@ -30,6 +30,7 @@ import (
 	"yunion.io/x/onecloud/pkg/util/shellutils"
 )
 
+// 电信天翼云
 type BaseOptions struct {
 	cloudprovider.SCtyunExtraOptions
 

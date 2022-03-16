@@ -24,6 +24,7 @@ var (
 	ServicesV3 modulebase.ResourceManager
 )
 
+// 说明服务注册这一步并不是在main函数的执行流程里面的
 func init() {
 	Services = modules.NewIdentityManager("OS-KSADM:service",
 		"OS-KSADM:services",

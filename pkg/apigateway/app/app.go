@@ -41,16 +41,16 @@ func NewApp(app *appsrv.Application) *Application {
 }
 
 func (app *Application) InitHandlers() *Application {
-	// bind auth handlers
+	// bind auth handlers keystone 用户认证、用户访问策略相关
 	app.AuthHandler = handler.NewAuthHandlers("/api/v1/auth", nil)
 
-	// bind misc handlers
+	// bind misc handlers  下载上传相关
 	app.MiscHandler = handler.NewMiscHandler("/api/v1/")
 
-	// bind k8s resource handlers
+	// bind k8s resource handlers  k8s资源相关
 	app.K8sHandler = handler.NewK8sResourceHandler("/api/v1/_raw")
 
-	// bind restful resource handlers
+	// bind restful resource handlers  资源相关，分发关键
 	app.ResourceHandler = handler.NewResourceHandlers("/api").
 		AddGet(handler.FetchAuthToken).
 		AddPost(handler.FetchAuthToken).
